@@ -16,7 +16,9 @@ CHIP DecoderSegment201890722 {
 
     // ===== Segment a =====
     // a = A'B'C'D + A'BC'D' + AB'CD'
-    And(a=notA, b=notB, out=a_temp1);
+ And(a=notA, \
+    b=B, \
+    out=a_temp3);
     And(a=a_temp1, b=notC, out=a_temp2);
     And(a=a_temp2, b=D, out=a_term1);
     
