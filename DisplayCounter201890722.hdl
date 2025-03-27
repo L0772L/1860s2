@@ -3,13 +3,13 @@ CHIP DisplayCounter201890722 {
     OUT a, b, c, d, e, f, g;
 
     PARTS:
-    // 计数器：使用之前写的 Counter 芯片
+    // 使用你的 Counter 计数器
     Counter(inc=inc, reset=reset, out=counterOut);
 
-    // 提取最低 4 位（0~15）
+    // 提取低4位（out[0..3]）
     And16(a=counterOut, b[0..3]=true, b[4..15]=false, out=low4);
 
-    // 连接到 Decoder201890722 解码器
+    // 输入到七段解码器
     Decoder201890722(
         A=low4[3],
         B=low4[2],
@@ -18,4 +18,3 @@ CHIP DisplayCounter201890722 {
         a=a, b=b, c=c, d=d, e=e, f=f, g=g
     );
 }
-
