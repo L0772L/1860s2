@@ -3,17 +3,19 @@ CHIP DisplayCounter201890722 {
     OUT a, b, c, d, e, f, g;
 
     PARTS:
-    Register(in=nextCount, load=inc, out=currentCount, out[0..3]=binVal);
-    Inc16(in=currentCount, out=incremented);
-    Mux16(a=currentCount, b=incremented, sel=inc, out=countAfterInc);
-    Mux16(a=countAfterInc, b=false, sel=reset, out=nextCount);
+    // 计数器：使用之前写的 Counter 芯片
+    Counter(inc=inc, reset=reset, out=counterOut);
 
-    // 关键修正：确保调用名称完全一致
-    DecoderSegment201890722(
-        A=binVal[0],
-        B=binVal[1],
-        C=binVal[2],
-        D=binVal[3], 
+    // 提取最低 4 位（0~15）
+    And16(a=counterOut, b[0..3]=true, b[4..15]=false, out=low4);
+
+    // 连接到 Decoder201890722 解码器
+    Decoder201890722(
+        A=low4[3],
+        B=low4[2],
+        C=low4[1],
+        D=low4[0],
         a=a, b=b, c=c, d=d, e=e, f=f, g=g
     );
 }
+

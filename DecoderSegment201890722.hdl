@@ -1,153 +1,135 @@
-/**
- * 7-Segment Decoder (Corrected Implementation)
- * Student ID: 201890722
- * Properly uses only 2-input AND/OR gates
- */
-CHIP DecoderSegment201890722 {
+CHIP Decoder201890722 {
     IN A, B, C, D;
     OUT a, b, c, d, e, f, g;
 
     PARTS:
-    // ===== Input inversions =====
-    Not(in=A, out=notA);
-    Not(in=B, out=notB);
-    Not(in=C, out=notC);
-    Not(in=D, out=notD);
+    // --- b 的逻辑 ---
+    Not(in=B,out=NotBb);
+    Not(in=D,out=NotDb);
+    Or(a=C,b=NotDb,out=CandNOTDb);
+    Or(a=B,b=CandNOTDb,out=pab);
+    Or(a=NotBb,b=A,out=NotBandAb);
+    Or(a=C,b=NotBandAb,out=pbb);
+    Or(a=NotDb,b=A,out=pcb);
+    And(a=pab,b=pbb,out=pdb);
+    And(a=pdb,b=pcb,out=b);
 
-    // ===== Segment a =====
-    // a = A'B'C'D + A'BC'D' + AB'CD'
- And(a=notA, \
-    b=B, \
-    out=a_temp3);
-    And(a=a_temp1, b=notC, out=a_temp2);
-    And(a=a_temp2, b=D, out=a_term1);
-    
-    And(a=notA, b=B, out=a_temp3);
-    And(a=a_temp3, b=notC, out=a_temp4);
-    And(a=a_temp4, b=notD, out=a_term2);
-    
-    And(a=A, b=notB, out=a_temp5);
-    And(a=a_temp5, b=C, out=a_temp6);
-    And(a=a_temp6, b=notD, out=a_term3);
-    
-    Or(a=a_term1, b=a_term2, out=a_temp7);
-    Or(a=a_temp7, b=a_term3, out=a);
+    // --- g 的逻辑 ---
+    Not(in = A, out = NOTAg);
+    Not(in = B, out = NOTBg);
+    Not(in = C, out = NOTCg);
+    Not(in = D, out = NOTDg);
 
-    // ===== Segment b =====
-    // b = A'BD' + A'BC + AB'C'D'
-    And(a=notA, b=B, out=b_temp1);
-    And(a=b_temp1, b=notD, out=b_term1);
-    
-    And(a=notA, b=B, out=b_temp2);
-    And(a=b_temp2, b=C, out=b_term2);
-    
-    And(a=A, b=notB, out=b_temp3);
-    And(a=b_temp3, b=notC, out=b_temp4);
-    And(a=b_temp4, b=notD, out=b_term3);
-    
-    Or(a=b_term1, b=b_term2, out=b_temp5);
-    Or(a=b_temp5, b=b_term3, out=b);
+    And(a = NOTBg, b = NOTDg, out = P1g);
+    And(a = NOTBg, b = NOTCg, out = P2g);
+    And(a = NOTAg, b = C, out = NOTAcg);
+    And(a = NOTAcg, b = D, out = P3g);
+    And(a = A, b = NOTCg, out = ANOTCg);
+    And(a = ANOTCg, b = D, out = P4g);
+    And(a = NOTAg, b = NOTCg, out = NOTACg);
+    And(a = NOTACg, b = NOTDg, out = P5g);
 
-    // ===== Segment c =====
-    // c = A'B'C + A'BC'D' + AB'C'
-    And(a=notA, b=notB, out=c_temp1);
-    And(a=c_temp1, b=C, out=c_term1);
-    
-    And(a=notA, b=B, out=c_temp2);
-    And(a=c_temp2, b=notC, out=c_temp3);
-    And(a=c_temp3, b=notD, out=c_term2);
-    
-    And(a=A, b=notB, out=c_temp4);
-    And(a=c_temp4, b=notC, out=c_term3);
-    
-    Or(a=c_term1, b=c_term2, out=c_temp5);
-    Or(a=c_temp5, b=c_term3, out=c);
+    Or(a = P1g, b = P2g, out = ag1);
+    Or(a = ag1, b = P3g, out = ag2);
+    Or(a = ag2, b = P4g, out = ag3);
+    Or(a = ag3, b = P5g, out = g);
 
-    // ===== Segment d =====
-    // d = A'B'C'D + A'BC'D + AB'CD' + ABCD
-    And(a=notA, b=notB, out=d_temp1);
-    And(a=d_temp1, b=notC, out=d_temp2);
-    And(a=d_temp2, b=D, out=d_term1);
-    
-    And(a=notA, b=B, out=d_temp3);
-    And(a=d_temp3, b=notC, out=d_temp4);
-    And(a=d_temp4, b=D, out=d_term2);
-    
-    And(a=A, b=notB, out=d_temp5);
-    And(a=d_temp5, b=C, out=d_temp6);
-    And(a=d_temp6, b=notD, out=d_term3);
-    
-    And(a=A, b=B, out=d_temp7);
-    And(a=d_temp7, b=C, out=d_temp8);
-    And(a=d_temp8, b=D, out=d_term4);
-    
-    Or(a=d_term1, b=d_term2, out=d_temp9);
-    Or(a=d_temp9, b=d_term3, out=d_temp10);
-    Or(a=d_temp10, b=d_term4, out=d);
+    // --- f 的逻辑 ---
+    Not(in = A, out = NOTAf);
+    Not(in = B, out = NOTBf);
+    Not(in = C, out = NOTCf);
+    Not(in = D, out = NOTDf);
 
-    // ===== Segment e =====
-    // e = A'B'C'D + A'B'CD + A'BC'D + ABCD'
-    And(a=notA, b=notB, out=e_temp1);
-    And(a=e_temp1, b=notC, out=e_temp2);
-    And(a=e_temp2, b=D, out=e_term1);
-    
-    And(a=notA, b=notB, out=e_temp3);
-    And(a=e_temp3, b=C, out=e_temp4);
-    And(a=e_temp4, b=D, out=e_term2);
-    
-    And(a=notA, b=B, out=e_temp5);
-    And(a=e_temp5, b=notC, out=e_temp6);
-    And(a=e_temp6, b=D, out=e_term3);
-    
-    And(a=A, b=B, out=e_temp7);
-    And(a=e_temp7, b=C, out=e_temp8);
-    And(a=e_temp8, b=notD, out=e_term4);
-    
-    Or(a=e_term1, b=e_term2, out=e_temp9);
-    Or(a=e_temp9, b=e_term3, out=e_temp10);
-    Or(a=e_temp10, b=e_term4, out=e);
+    And(a = NOTBf, b = NOTDf, out = P1f);
+    And(a = B, b = C, out = P2f);
+    And(a = A, b = NOTDf, out = P3f);
+    And(a = NOTAf, b = C, out = P4f);
+    And(a = A, b = NOTBc, out = NOTBaf);
+    And(a = NOTBaf, b = NOTCf, out = P5f);
+    And(a = NOTAf, b = B, out = NOTAbf);
+    And(a = NOTAbf, b = D, out = P6f);
 
-    // ===== Segment f =====
-    // f = A'B'C'D + A'B'CD' + A'B'CD + A'BC'D'
-    And(a=notA, b=notB, out=f_temp1);
-    And(a=f_temp1, b=notC, out=f_temp2);
-    And(a=f_temp2, b=D, out=f_term1);
-    
-    And(a=notA, b=notB, out=f_temp3);
-    And(a=f_temp3, b=C, out=f_temp4);
-    And(a=f_temp4, b=notD, out=f_term2);
-    
-    And(a=notA, b=notB, out=f_temp5);
-    And(a=f_temp5, b=C, out=f_temp6);
-    And(a=f_temp6, b=D, out=f_term3);
-    
-    And(a=notA, b=B, out=f_temp7);
-    And(a=f_temp7, b=notC, out=f_temp8);
-    And(a=f_temp8, b=notD, out=f_term4);
-    
-    Or(a=f_term1, b=f_term2, out=f_temp9);
-    Or(a=f_temp9, b=f_term3, out=f_temp10);
-    Or(a=f_temp10, b=f_term4, out=f);
+    Or(a = P1f, b = P2f, out = fa1);
+    Or(a = fa1, b = P3f, out = fa2);
+    Or(a = fa2, b = P4f, out = fa3);
+    Or(a = fa3, b = P5f, out = fa4);
+    Or(a = fa4, b = P6f, out = f);
 
-    // ===== Segment g =====
-    // g = A'B'C'D' + A'B'CD + A'BC'D + ABCD'
-    And(a=notA, b=notB, out=g_temp1);
-    And(a=g_temp1, b=notC, out=g_temp2);
-    And(a=g_temp2, b=notD, out=g_term1);
-    
-    And(a=notA, b=notB, out=g_temp3);
-    And(a=g_temp3, b=C, out=g_temp4);
-    And(a=g_temp4, b=D, out=g_term2);
-    
-    And(a=notA, b=B, out=g_temp5);
-    And(a=g_temp5, b=notC, out=g_temp6);
-    And(a=g_temp6, b=D, out=g_term3);
-    
-    And(a=A, b=B, out=g_temp7);
-    And(a=g_temp7, b=C, out=g_temp8);
-    And(a=g_temp8, b=notD, out=g_term4);
-    
-    Or(a=g_term1, b=g_term2, out=g_temp9);
-    Or(a=g_temp9, b=g_term3, out=g_temp10);
-    Or(a=g_temp10, b=g_term4, out=g);
-}
+    // --- e 的逻辑 ---
+    Not(in = A, out = NOTAe);
+    Not(in = B, out = NOTBe);
+    Not(in = C, out = NOTCe);
+    Not(in = D, out = NOTDe);
+
+    And(a = A, b = NOTBe, out = P1e);
+    And(a = NOTCe, b = D, out = P2e);
+    And(a = NOTAe, b = B, out = P3e);
+    And(a = NOTAe, b = D, out = P4e);
+    And(a = NOTBe, b = NOTCe, out = P5e);
+
+    Or(a = P1e, b = P2e, out = ea1);
+    Or(a = ea1, b = P3e, out = ea2);
+    Or(a = ea2, b = P4e, out = ea3);
+    Or(a = ea3, b = P5e, out = e);
+
+    // --- c 的逻辑 ---
+    Not(in = A, out = NOTAc);
+    Not(in = B, out = NOTBc);
+    Not(in = C, out = NOTCc);
+    Not(in = D, out = NOTDc);
+
+    And(a = NOTBc, b = C, out = P1c);
+    And(a = C, b = NOTDc, out = P2c);
+    And(a = A, b = NOTBc, out = P3c);
+    And(a = A, b = D, out = P4c);
+    And(a = NOTCc, b = NOTAc, out = tmpc);
+    And(a = B, b = tmpc, out = P5c);
+
+    Or(a = P1c, b = P2c, out = ca1);
+    Or(a = ca1, b = P3c, out = ca2);
+    Or(a = ca2, b = P4c, out = ca3);
+    Or(a = ca3, b = P5c, out = c);
+
+    // --- d 的逻辑 ---
+    Not(in = A, out = NOTAd);
+    Not(in = B, out = NOTBd);
+    Not(in = C, out = NOTCd);
+    Not(in = D, out = NOTDd);
+
+    And(a = NOTCd, b = NOTDd, out = P1d);
+    And(a = NOTAd, b = B, out = ABd);
+    And(a = ABd, b = NOTCd, out = P2d);
+    And(a = B, b = NOTDd, out = P3d);
+    And(a = A, b = C, out = P4d);
+    And(a = A, b = NOTBd, out = P5d);
+
+    Or(a = P1d, b = P2d, out = da1);
+    Or(a = P3d, b = P4d, out = da2);
+    Or(a = da2, b = P5d, out = da3);
+    Or(a = da1, b = da3, out = d);
+
+    // --- a 的逻辑 ---
+    Not(in = A, out = NOTAa);
+    Not(in = B, out = NOTBa);
+    Not(in = C, out = NOTCa);
+    Not(in = D, out = NOTDa);
+
+    And(a = A, b = B, out = ABa);
+    And(a = ABa, b = NOTDa, out = P1a);
+    And(a = NOTBa, b = NOTCa, out = BCa);
+    And(a = BCa, b = NOTDa, out = P2a);
+    And(a = B, b = NOTCa, out = P3aa);
+    And(a = P3aa, b = D, out = P3a);
+    And(a = NOTAa, b = C, out = P4aa);
+    And(a = P4aa, b = NOTDa, out = P4a);
+    And(a = A, b = NOTBa, out = P5aa);
+    And(a = P5aa, b = D, out = P5a);
+    And(a = NOTAa, b = NOTBa, out = ABa2);
+    And(a = ABa2, b = C, out = P6a);
+
+    Or(a = P1a, b = P2a, out = a1);
+    Or(a = a1, b = P3a, out = a2);
+    Or(a = a2, b = P4a, out = a3);
+    Or(a = a3, b = P5a, out = a4);
+    Or(a = a4, b = P6a, out = a);
+    }
