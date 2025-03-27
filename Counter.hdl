@@ -3,18 +3,19 @@ CHIP Counter {
     OUT out[16];
 
     PARTS:
-    // 当前值寄存器
-    Register(in=inValue, out=out, load=load);
+    // 计算是否需要加载
+    Or(a=inc, b=reset, out=doLoad);
 
-    // 加一器
+    // 加法器
     Inc16(in=out, out=incOut);
 
-    // 如果 inc=1，则选择加1后的值，否则保持不变
+    // 根据 inc 决定是否加一
     Mux16(a=out, b=incOut, sel=inc, out=maybeInc);
 
-    // 如果 reset=1，则选择全0，否则保留 maybeInc
+    // 根据 reset 决定是否清零
     Mux16(a=maybeInc, b[0..15]=false, sel=reset, out=inValue);
 
-    // 只要 inc 或 reset 有一个为1，就加载寄存器
-    Or(a=inc, b=reset, out=load);
+    // 保存当前值
+    Register(in=inValue, out=out, load=doLoad);
 }
+
