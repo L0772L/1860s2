@@ -1,0 +1,33 @@
+/**
+ * 4-Bit Counter with 7-Segment Display
+ * Student ID: 201890722
+ * Counts 0-F with increment/reset control
+ */
+CHIP DisplayCounter201890722 {
+    IN inc, reset;    // Control signals
+    OUT a, b, c, d, e, f, g;  // Segment outputs
+
+    PARTS:
+    // ===== 4-bit Counter Core =====
+    Register(in=nextCount, load=inc, out=currentCount, out[0..3]=binVal);
+    
+    // Increment logic (using 16-bit for compatibility)
+    Inc16(in=currentCount, out=incremented);
+    
+    // Select between increment or keep current value
+    Mux16(a=currentCount, b=incremented, sel=inc, out=countAfterInc);
+    
+    // Reset override
+    Mux16(a=countAfterInc, b=false, sel=reset, out=nextCount);
+
+    // ===== Display Decoder ===== 
+    // Convert binary to 7-segment signals
+    // Using your Week 7 decoder (must exist as DecoderSegment201890722.hdl)
+    DecoderSegment201890722(
+        A=binVal[0],  // LSB
+        B=binVal[1],
+        C=binVal[2],
+        D=binVal[3],  // MSB
+        a=a, b=b, c=c, d=d, e=e, f=f, g=g
+    );
+}
